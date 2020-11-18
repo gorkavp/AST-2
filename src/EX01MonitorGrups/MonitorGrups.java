@@ -29,7 +29,7 @@ public class MonitorGrups {
     public void entrar(int id, int tipus) {
         l.lock();
         try {
-            //...
+            //...hola que tal
         } finally {
             l.unlock();
         }
@@ -39,7 +39,7 @@ public class MonitorGrups {
     public void sortir(int id, int tipus) {
         l.lock();
         try {
-            //...
+            //...molt be
         } finally {
             l.unlock();
         }
