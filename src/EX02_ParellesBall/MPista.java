@@ -27,7 +27,7 @@ public class MPista {
     public int ballar(int id) {
         l.lock();
         try {
-            //...
+            return 0;
         } finally {
             l.unlock();
         }

@@ -1,6 +1,5 @@
 package EX01MonitorGrups;
 
-
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -27,9 +26,27 @@ public class MonitorGrups {
     }
 
     public void entrar(int id, int tipus) {
+
         l.lock();
         try {
-            //...hola que tal
+
+            while (!this.grupDins) {
+                if (tipus == 0) {
+                    this.dins += id;
+                } else {
+                    this.dins += id;
+                }
+                this.numGrup[tipus]++;
+                if (this.numGrup[tipus] < this.G[tipus]) {
+                    this.altres[tipus].awaitUninterruptibly();
+                } else {
+                    this.grupDins = true;
+                }
+            }
+            this.numGrup[tipus] = 0;
+            this.numAcabats++;
+            System.out.println(this.dins);
+
         } finally {
             l.unlock();
         }
@@ -37,9 +54,14 @@ public class MonitorGrups {
     }
 
     public void sortir(int id, int tipus) {
+
         l.lock();
         try {
-            //...molt be
+            this.grupDins = false;
+            if (this.numAcabats == 0) {
+                this.altres[tipus].signalAll();
+            }
+
         } finally {
             l.unlock();
         }
