@@ -31,11 +31,6 @@ public class MonitorGrups {
         try {
 
             while (!this.grupDins) {
-                if (tipus == 0) {
-                    this.dins += id;
-                } else {
-                    this.dins += id;
-                }
                 this.numGrup[tipus]++;
                 if (this.numGrup[tipus] < this.G[tipus]) {
                     this.altres[tipus].awaitUninterruptibly();
@@ -44,9 +39,6 @@ public class MonitorGrups {
                 }
             }
             this.numGrup[tipus] = 0;
-            this.numAcabats++;
-            System.out.println(this.dins);
-
         } finally {
             l.unlock();
         }
@@ -58,10 +50,7 @@ public class MonitorGrups {
         l.lock();
         try {
             this.grupDins = false;
-            if (this.numAcabats == 0) {
-                this.altres[tipus].signalAll();
-            }
-
+            this.altres[tipus].signalAll();
         } finally {
             l.unlock();
         }
