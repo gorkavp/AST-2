@@ -27,10 +27,26 @@ public class MPista {
     public int ballar(int id) {
         l.lock();
         try {
-            return 0;
+
+            int tipus = id % 2;
+            while (this.genere[tipus] == 1) {
+                this.ocupat[tipus].awaitUninterruptibly();
+            }
+            this.genere[tipus]++;
+            this.idAltre = id; 
+
+            while (this.genere[1 - tipus] == 0) {
+                this.parella[tipus].awaitUninterruptibly();
+            }
+
+            if (this.genere[tipus] != 0 && this.genere[1 - tipus] != 0) {
+                this.ocupat[1 - tipus].signal();
+            }
+
+            return this.idAltre;
+
         } finally {
             l.unlock();
         }
     }
-
 }

@@ -18,6 +18,7 @@ public class Fil extends Thread {
             for (int j = 0; j < N; j++) {
                 sleep(((int) (Math.random() * 10)));
                 int parella = m.ballar(id);
+                System.out.println("Nova parella: (" + this.id + "," + parella + ")");
             }
         } catch (Exception e) {
             e.printStackTrace();

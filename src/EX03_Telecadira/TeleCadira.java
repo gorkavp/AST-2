@@ -26,7 +26,27 @@ public class TeleCadira {
     public void esperar(int id) {
         l.lock();
         try {
-            //...
+
+            this.esp++;
+
+            while (this.esp != this.C) {
+
+                this.str += id + ", ";
+                this.lliure.awaitUninterruptibly();
+            }
+
+            while (this.esp == this.C) {
+
+                this.altres.awaitUninterruptibly();
+            }
+
+            if (this.esp == this.C) {
+
+                this.esp = 0;
+                this.lliure.signalAll();
+
+            }
+
         } finally {
             l.unlock();
         }
@@ -35,7 +55,19 @@ public class TeleCadira {
     public void seure(int id) {
         l.lock();
         try {
-            //...
+
+            this.dins++;
+            while (this.dins != this.C) {
+                this.totsDins.awaitUninterruptibly();
+            }
+
+            if (this.dins == this.C) {
+
+                System.out.println("surt cadira: [" + this.str + "]");
+                this.dins = 0;
+                this.totsDins.awaitUninterruptibly();
+            }
+
         } finally {
             l.unlock();
         }
