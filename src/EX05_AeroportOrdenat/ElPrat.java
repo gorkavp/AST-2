@@ -8,6 +8,7 @@ public class ElPrat {
 
     private final int N;
     private int pistaAct = -1;
+    private int esperant = 0;
     private int numEnlairant = 0;
     private final ReentrantLock l = new ReentrantLock();
     private final ArrayList<Condition> espEnl = new ArrayList<>();
@@ -21,9 +22,31 @@ public class ElPrat {
     public void permisEnlairar(int numPista) {
         l.lock();
         try {
+
             ordreArr = ordreArr + numPista;
-            //...
-            ordreEnl = ordreEnl + numPista;
+
+            if (this.numEnlairant == 0) {
+
+                this.pistaAct = numPista;
+            }
+
+            while (this.pistaAct != numPista && this.pistaAct != -1) {
+                
+                this.pistaAct = numPista;
+                this.esperant += this.numEnlairant;
+                this.espEnl.add(this.esperant,this.l.newCondition());
+                this.espEnl.get(this.esperant).awaitUninterruptibly();
+
+            }
+
+            if (this.pistaAct == numPista) {
+
+                ordreEnl = ordreEnl + numPista;
+                this.espEnl.add(this.numEnlairant, this.l.newCondition());
+                this.numEnlairant++;
+
+            }
+
         } finally {
             l.unlock();
         }
@@ -36,7 +59,9 @@ public class ElPrat {
             if (numEnlairant == 0) {
                 pistaAct = -1;
                 ordreEnl = ordreEnl + "*";
-                //...
+                for (Condition c : this.espEnl) {
+                    c.signal();
+                }
             }
         } finally {
             l.unlock();
