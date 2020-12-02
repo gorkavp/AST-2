@@ -18,11 +18,35 @@ public class ElPrat {
     }
 
     public void permisEnlairar(int numPista) {
+
         l.lock();
         try {
+
             ordreArr = ordreArr + numPista;
-            //...
-            ordreEnl = ordreEnl + numPista;
+
+            if (this.numEnlairant == 0) {
+                this.pistaAct = numPista;
+
+            }
+
+            while (this.pistaAct != numPista && this.pistaAct != -1) {
+
+                this.espEnl.awaitUninterruptibly();
+            }
+
+            if (this.pistaAct == numPista) {
+
+                this.numEnlairant++;
+                ordreEnl = ordreEnl + numPista;
+
+            } else {
+
+                this.numEnlairant++;
+                ordreEnl = ordreEnl + numPista;
+                this.pistaAct = numPista;
+
+            }
+
         } finally {
             l.unlock();
         }
@@ -35,7 +59,7 @@ public class ElPrat {
             if (numEnlairant == 0) {
                 pistaAct = -1;
                 ordreEnl = ordreEnl + "*";
-                //...
+                this.espEnl.signalAll();
             }
         } finally {
             l.unlock();
