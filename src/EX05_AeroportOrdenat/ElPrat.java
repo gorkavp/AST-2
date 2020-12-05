@@ -22,34 +22,30 @@ public class ElPrat {
         l.lock();
         try {
 
-            ordreArr = ordreArr + numPista;
-
-            if (this.numEnlairant == 0) {
-
-                this.pistaAct = numPista;
+            if (!this.espEnl.isEmpty() && this.pistaAct == -1) {
+                this.espEnl.get(0).signal();
             }
 
-            if (this.numEnlairant > 0) {
+            Condition c = null;
 
-                this.espEnl.add(this.l.newCondition());
+            while ((!this.espEnl.isEmpty() && c == null) || this.pistaAct == -1) {
 
-            }
+                if (c == null) {
 
-            while (this.pistaAct != numPista && this.pistaAct != 1) {
-
-                for (Condition c : this.espEnl) {
-                    c.awaitUninterruptibly();
+                    ordreArr = ordreArr + numPista;
+                    c = this.l.newCondition();
+                    this.espEnl.add(c);
                 }
+                c.awaitUninterruptibly();
+
                 this.pistaAct = numPista;
             }
 
-            if (this.pistaAct == numPista) {
-
-                ordreEnl = ordreEnl + numPista;
+            if (c != null) {
                 this.numEnlairant++;
-
+                ordreEnl = ordreEnl + numPista;
+                this.espEnl.remove(c);
             }
-
         } finally {
             l.unlock();
         }
@@ -57,14 +53,14 @@ public class ElPrat {
 
     public void fiEnlairar(int numPista) {
         l.lock();
-        int m = 0;
         try {
             numEnlairant = numEnlairant - 1;
             if (numEnlairant == 0) {
                 pistaAct = -1;
                 ordreEnl = ordreEnl + "*";
-               this.espEnl.get(m).signal();
-               m++;
+                if (!this.espEnl.isEmpty()) {
+                    this.espEnl.get(0).signal();
+                }
             }
         } finally {
             l.unlock();

@@ -12,7 +12,7 @@ public class MonitorGrups {
 
     private boolean grupDins = false;
     private final int[] numGrup;
-    private int[] numAcabats;
+    private int numAcabats;
 
     private String dins = "";
 
@@ -31,28 +31,26 @@ public class MonitorGrups {
         try {
 
             while (!this.grupDins) {
+                
                 this.numGrup[tipus]++;
+                
                 if (this.numGrup[tipus] < this.G[tipus]) {
+                    
                     this.altres[tipus].awaitUninterruptibly();
                     this.grupDins = true;
+                    
                 } else {
+                    
                     this.grupDins = true;
+                    this.dins += id + ", ";
+                    this.altres[tipus].signalAll();
                 }
+                System.out.println(this.dins);
             }
-            if (tipus == 0 ) {
-                System.out.print(id - 8 + ", ");
-                System.out.print(id - 6 + ", ");
-                System.out.print(id - 4 + ", ");
-                System.out.print(id - 2 + ", ");
-                System.out.println(id + ", ");
-            } else {
-                System.out.println(id - 2 + ", " + id);
-            }
-            this.numGrup[tipus] = 0;
+
         } finally {
             l.unlock();
         }
-
     }
 
     public void sortir(int id, int tipus) {
@@ -60,7 +58,8 @@ public class MonitorGrups {
         l.lock();
         try {
             this.grupDins = false;
-            this.altres[tipus].signalAll();
+            this.numGrup[tipus] = 0;
+            this.dins = "";
         } finally {
             l.unlock();
         }
