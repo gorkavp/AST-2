@@ -25,8 +25,8 @@ public class ElPrat {
             ordreArr = ordreArr + numPista;
 
             if (this.numEnlairant == 0) {
+                
                 this.pistaAct = numPista;
-
             }
 
             while (this.pistaAct != numPista && this.pistaAct != -1) {

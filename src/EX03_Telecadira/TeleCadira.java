@@ -56,18 +56,22 @@ public class TeleCadira {
         try {
 
             this.dins++;
-            
-            while (this.dins < this.C) {
+
+            if (this.dins < this.C) {
                 this.str += id + ", ";
                 this.totsDins.awaitUninterruptibly();
             }
 
-            if (this.dins != this.C) {
-                this.totsDins.signal();
-
-            } else {
-
+            if (this.dins == this.C) {
+                
                 this.str += id;
+                this.totsDins.signalAll();
+            }
+
+            this.dins--;
+
+            if (this.dins == 0) {
+
                 System.out.println("surt cadira: [" + this.str + "]");
                 this.dins = 0;
                 this.esp = 0;

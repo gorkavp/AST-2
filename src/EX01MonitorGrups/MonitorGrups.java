@@ -30,24 +30,30 @@ public class MonitorGrups {
         l.lock();
         try {
 
-            while (!this.grupDins) {
-                
-                this.numGrup[tipus]++;
-                
-                if (this.numGrup[tipus] < this.G[tipus]) {
-                    
-                    this.altres[tipus].awaitUninterruptibly();
-                    this.grupDins = true;
-                    
-                } else {
-                    
-                    this.grupDins = true;
-                    this.dins += id + ", ";
-                    this.altres[tipus].signalAll();
-                }
-                System.out.println(this.dins);
+            while (this.numGrup[tipus] >= this.G[tipus] || this.grupDins) {
+
+                this.acabaGrup.awaitUninterruptibly();
             }
 
+            this.numGrup[tipus]++;
+
+            while (this.numGrup[tipus] < this.G[tipus]) {
+
+                this.altres[tipus].awaitUninterruptibly();
+            }
+
+            this.numAcabats++;
+            this.grupDins = true;
+
+            if (this.numAcabats < this.G[tipus]) {
+
+                this.dins += id + ", ";
+                this.altres[tipus].signal();
+                
+            } else {
+                
+                this.dins += id;
+            }
         } finally {
             l.unlock();
         }
@@ -57,9 +63,14 @@ public class MonitorGrups {
 
         l.lock();
         try {
-            this.grupDins = false;
-            this.numGrup[tipus] = 0;
-            this.dins = "";
+            this.numAcabats--;
+            if (this.numAcabats == 0) {
+                System.out.println("[" + this.dins + "]");
+                this.grupDins = false;
+                this.numGrup[tipus] = 0;
+                this.dins = "";
+                this.acabaGrup.signalAll();
+            }
         } finally {
             l.unlock();
         }

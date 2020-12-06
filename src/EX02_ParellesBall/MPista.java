@@ -33,14 +33,26 @@ public class MPista {
                 this.ocupat[tipus].awaitUninterruptibly();
             }
             this.genere[tipus]++;
-            this.idAltre = id; 
 
             while (this.genere[1 - tipus] == 0) {
+
+                this.idAltre = id;
                 this.parella[tipus].awaitUninterruptibly();
+                this.genere[tipus] = 0;
             }
 
             if (this.genere[tipus] != 0 && this.genere[1 - tipus] != 0) {
-                this.ocupat[1 - tipus].signal();
+
+                System.out.print("Nova parella: (" + id + "," + this.idAltre + ")");
+                this.parella[1 - tipus].signal();
+                this.idAltre = id;
+
+            } else {
+
+                System.out.println("->(" + id + "," + this.idAltre + ")");
+                this.genere[1 - tipus] = 0;
+                this.ocupat[tipus].signalAll();
+                this.ocupat[1 - tipus].signalAll();
             }
 
             return this.idAltre;

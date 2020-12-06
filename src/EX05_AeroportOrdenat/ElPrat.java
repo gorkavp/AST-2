@@ -28,7 +28,7 @@ public class ElPrat {
 
             Condition c = null;
 
-            while ((!this.espEnl.isEmpty() && c == null) || this.pistaAct == -1) {
+            while ((!this.espEnl.isEmpty() && c == null) || this.pistaAct == -1 || this.pistaAct != numPista) {
 
                 if (c == null) {
 
@@ -38,13 +38,19 @@ public class ElPrat {
                 }
                 c.awaitUninterruptibly();
 
-                this.pistaAct = numPista;
+                if (this.numEnlairant == 0) {
+
+                    this.pistaAct = numPista;
+                }
             }
 
             if (c != null) {
                 this.numEnlairant++;
                 ordreEnl = ordreEnl + numPista;
                 this.espEnl.remove(c);
+                if (!this.espEnl.isEmpty()) {
+                    this.espEnl.get(0).signal();
+                }
             }
         } finally {
             l.unlock();
