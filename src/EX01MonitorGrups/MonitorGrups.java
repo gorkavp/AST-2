@@ -63,7 +63,7 @@ public class MonitorGrups {
 
         l.lock();
         try {
-            this.numAcabats--;
+            this.numAcabats = this.numAcabats - 1;
             if (this.numAcabats == 0) {
                 System.out.println("[" + this.dins + "]");
                 this.grupDins = false;
