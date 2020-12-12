@@ -28,7 +28,7 @@ public class ElPrat {
 
             Condition c = null;
 
-            while ((!this.espEnl.isEmpty() && c == null) || this.pistaAct == -1 || this.pistaAct != numPista) {
+            while ((!this.espEnl.isEmpty() && c == null) || this.pistaAct != numPista) {
 
                 if (c == null) {
 
